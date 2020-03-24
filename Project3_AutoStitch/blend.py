@@ -29,8 +29,27 @@ def imageBoundingBox(img, M):
     """
     #TODO 8
     #TODO-BLOCK-BEGIN
-    raise Exception("TODO in blend.py not implemented")
+    def getTransformed (point, M):
+        transform = np.dot(M,point)
+        return (transform[0]/transform[2],transform[1]/transform[2])
+    #topleft, top right, bot left ,bot right
+    edges = [np.array([0,0,1]), np.array([0,img.shape[0]-1,1]),np.array([img.shape[1]-1, 0,1])\
+        , np.array([img.shape[1]-1, img.shape[0]-1,1])]
+    x_cords =[]
+    y_cords=[]
+    for edge in edges:
+        t= getTransformed(edge,M)
+        x_cords.append(t[0])
+        y_cords.append(t[1])
+    
+    minX = min(x_cords)
+    minY = min(y_cords)
+    maxX = max(x_cords)
+    maxY = max(y_cords)
+    
+    #print(img.shape)
     #TODO-BLOCK-END
+    print('done')
     return int(minX), int(minY), int(maxX), int(maxY)
 
 
@@ -97,8 +116,8 @@ def getAccSize(ipv):
     width = -1  # Assumes all images are the same width
     M = np.identity(3)
     for i in ipv:
-        M = i.position
-        img = i.img
+        M = i.position  # transform
+        img = i.img  # img
         _, w, c = img.shape
         if channels == -1:
             channels = c
@@ -107,7 +126,12 @@ def getAccSize(ipv):
         # BEGIN TODO 9
         # add some code here to update minX, ..., maxY
         #TODO-BLOCK-BEGIN
-        raise Exception("TODO in blend.py not implemented")
+        min_x,min_y,max_x,max_y = imageBoundingBox(img,M)
+        minX = min(minX,min_x)
+        minY = min(minY,min_y)
+        maxX = max(maxX,max_x)
+        maxY = max(maxY,max_y)
+        
         #TODO-BLOCK-END
         # END TODO
 
