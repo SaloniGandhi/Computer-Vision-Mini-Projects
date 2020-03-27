@@ -65,10 +65,30 @@ def accumulateBlend(img, acc, M, blendWidth):
          three channels of acc record the weighted sum of the pixel colors
          and the fourth channel of acc records a sum of the weights
     """
+    #Minv*acc(x',y')->I(x,y (img))
     # BEGIN TODO 10
     # Fill in this routine
     #TODO-BLOCK-BEGIN
-    raise Exception("TODO in blend.py not implemented")
+    img_h,img_w,channels = img.shape
+    accDim = imageBoundingBox(img,M)
+    minX, minY, maxX, maxY =  accDim
+
+    for x in range(minX,maxX):
+        for y in range(minY,maxY):
+            accPt =  np.array([x,y,1.0])
+            trans = np.dot(np.inv(M),accPt)
+            newX,newY = trans[0]/trans[2], trans[1]/trans[2]
+
+        if newx >= 0 and newx < w-1 and newy >= 0 and newy < h-1:    
+            weight = 1.0
+            if newx >= minX and newx < minX + blendWidth:
+                weight = 1. * (newx - minX) / blendWidth
+            if newx <= maxX and newx > maxX - blendWidth:
+                weight = 1. * (maxX - newx) / blendWidth
+            acc[j,i,3] += weight
+        
+            for k in range(3):
+                acc[j,i,k] += img[int(newy),int(newx),k] * weight
     #TODO-BLOCK-END
     # END TODO
 
