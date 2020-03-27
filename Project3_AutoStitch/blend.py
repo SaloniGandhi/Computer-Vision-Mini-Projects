@@ -105,10 +105,23 @@ def normalizeBlend(acc):
     # BEGIN TODO 11
     # fill in this routine..
     #TODO-BLOCK-BEGIN
-    raise Exception("TODO in blend.py not implemented")
-    #TODO-BLOCK-END
-    # END TODO
+    h_acc = acc.shape[0]
+    w_acc = acc.shape[1]
+    img = np.zeros((h_acc, w_acc, 3))
+    for i in range(0, w_acc, 1):
+        for j in range(0, h_acc, 1):
+            if acc[j,i,3]>0:
+                img[j,i,0] = int (acc[j,i,0] / acc[j,i,3])
+                img[j,i,1] = int (acc[j,i,1] / acc[j,i,3])
+                img[j,i,2] = int (acc[j,i,2] / acc[j,i,3])
+            else:
+                img[j,i,0] = 0
+                img[j,i,1] = 0
+                img[j,i,2] = 0
+    img = np.uint8(img)
     return img
+    
+    
 
 
 def getAccSize(ipv):
@@ -244,7 +257,8 @@ def blendImages(ipv, blendWidth, is360=False, A_out=None):
     # Note: warpPerspective does forward mapping which means A is an affine
     # transform that maps accumulator coordinates to final panorama coordinates
     #TODO-BLOCK-BEGIN
-    raise Exception("TODO in blend.py not implemented")
+    if is360:
+        A = computeDrift(x_init, y_init, x_final, y_final, width)
     #TODO-BLOCK-END
     # END TODO
 
