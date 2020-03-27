@@ -59,7 +59,7 @@ def computeHomography(f1, f2, matches, A_out=None):
         A[2*i+1,8] = -b_y
         #TODO-BLOCK-END
         #END TODO
-    print(A)
+    #print(A)
     U, s, Vt = np.linalg.svd(A)
 
     if A_out is not None:
@@ -200,13 +200,13 @@ def getInliers(f1, f2, matches, M, RANSACthresh):
         #If so, append i to inliers
 
         #TODO-BLOCK-BEGIN
-        print("in inlier")
+        #print("in inlier")
         queryId = matches[i].queryIdx
         trainId = matches[i].trainIdx
         x1,y1 = f1[queryId].pt
         x2,y2 = f2[trainId].pt
         out = np.dot(M,np.array([x1,y1,1]))
-        print(out)
+        #print(out)
 
         if (np.sqrt(((out[0]/out[2])-x2)**2 + ((out[1]/out[2])-y2)**2)) <= RANSACthresh:
             inlier_indices.append(i)
@@ -214,7 +214,7 @@ def getInliers(f1, f2, matches, M, RANSACthresh):
         #raise Exception("TODO in alignment.py not implemented")
         #TODO-BLOCK-END
         #END TODO
-    print("allwell")
+    #print("allwell")
     return inlier_indices
 
 def leastSquaresFit(f1, f2, matches, m, inlier_indices):
@@ -286,5 +286,5 @@ def leastSquaresFit(f1, f2, matches, m, inlier_indices):
 
     else:
         raise Exception("Error: Invalid motion model.")
-    print("allwell")
+    #print("allwell")
     return M

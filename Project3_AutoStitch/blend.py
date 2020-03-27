@@ -3,6 +3,7 @@ import sys
 
 import cv2
 import numpy as np
+from numpy.linalg import inv
 
 
 class ImageInfo:
@@ -49,7 +50,7 @@ def imageBoundingBox(img, M):
     
     #print(img.shape)
     #TODO-BLOCK-END
-    print('done')
+    #print('done')
     return int(minX), int(minY), int(maxX), int(maxY)
 
 
@@ -76,19 +77,19 @@ def accumulateBlend(img, acc, M, blendWidth):
     for x in range(minX,maxX):
         for y in range(minY,maxY):
             accPt =  np.array([x,y,1.0])
-            trans = np.dot(np.inv(M),accPt)
-            newX,newY = trans[0]/trans[2], trans[1]/trans[2]
+            trans = np.dot(inv(M),accPt)
+            newx,newy = trans[0]/trans[2], trans[1]/trans[2]
 
-        if newx >= 0 and newx < w-1 and newy >= 0 and newy < h-1:    
+        if newx >= 0 and newx < img_w-1 and newy >= 0 and newy < img_h-1:    
             weight = 1.0
             if newx >= minX and newx < minX + blendWidth:
                 weight = 1. * (newx - minX) / blendWidth
             if newx <= maxX and newx > maxX - blendWidth:
                 weight = 1. * (maxX - newx) / blendWidth
-            acc[j,i,3] += weight
+            acc[y,x,3] += weight
         
             for k in range(3):
-                acc[j,i,k] += img[int(newy),int(newx),k] * weight
+                acc[y,x,k] += img[int(newy),int(newx),k] * weight
     #TODO-BLOCK-END
     # END TODO
 
@@ -158,7 +159,7 @@ def getAccSize(ipv):
     # Create an accumulator image
     accWidth = int(math.ceil(maxX) - math.floor(minX))
     accHeight = int(math.ceil(maxY) - math.floor(minY))
-    print('accWidth, accHeight:', (accWidth, accHeight))
+    #print('accWidth, accHeight:', (accWidth, accHeight))
     translation = np.array([[1, 0, -minX], [0, 1, -minY], [0, 0, 1]])
 
     return accWidth, accHeight, channels, width, translation
