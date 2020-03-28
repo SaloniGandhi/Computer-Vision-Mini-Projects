@@ -136,6 +136,7 @@ def alignPair(f1, f2, matches, m, nRANSAC, RANSACthresh):
         nummatch=4
     cnt_max_inliers=0
     max_inliers=[]
+    H=np.zeros((3,3))
     for i in range(nRANSAC):
         '''pick some random matches and write ransac algo for both cases'''
         minmatches=np.random.choice(matches,nummatch)

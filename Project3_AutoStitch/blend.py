@@ -70,26 +70,35 @@ def accumulateBlend(img, acc, M, blendWidth):
     # BEGIN TODO 10
     # Fill in this routine
     #TODO-BLOCK-BEGIN
-    img_h,img_w,channels = img.shape
-    accDim = imageBoundingBox(img,M)
-    minX, minY, maxX, maxY =  accDim
+    h = img.shape[0]
+    w = img.shape[1]
+    
+    h_acc = acc.shape[0]
+    w_acc = acc.shape[1]
+    
 
-    for x in range(minX,maxX):
-        for y in range(minY,maxY):
-            accPt =  np.array([x,y,1.0])
-            trans = np.dot(inv(M),accPt)
-            newx,newy = trans[0]/trans[2], trans[1]/trans[2]
-
-        if newx >= 0 and newx < img_w-1 and newy >= 0 and newy < img_h-1:    
-            weight = 1.0
-            if newx >= minX and newx < minX + blendWidth:
-                weight = 1. * (newx - minX) / blendWidth
-            if newx <= maxX and newx > maxX - blendWidth:
-                weight = 1. * (maxX - newx) / blendWidth
-            acc[y,x,3] += weight
-        
-            for k in range(3):
-                acc[y,x,k] += img[int(newy),int(newx),k] * weight
+    minX, minY, maxX, maxY = imageBoundingBox(img,M)
+  
+    for x in range(minX,maxX,1):
+        for y in range(minY,maxY,1):  
+            p = np.array([x, y, 1.])
+            p = np.dot(inv(M),p)
+            newx = min(p[0] / p[2], w-1)
+            newy = min(p[1] / p[2], h-1)
+            if newx <0 or newx >= w or newy < 0 or newy >= h:
+                continue
+            if img[int(newy), int(newx), 0] == 0 and img[int(newy), int(newx), 1] ==0 and img[int(newy), int(newx), 2] == 0:
+                continue
+            if newx >= 0 and newx < w-1 and newy >= 0 and newy < h-1:    
+                weight = 1.0
+                if newx >= minX and newx < minX + blendWidth:
+                    weight = 1. * (newx - minX) / blendWidth
+                if newx <= maxX and newx > maxX - blendWidth:
+                    weight = 1. * (maxX - newx) / blendWidth
+                acc[y,x,3] += weight       
+                for k in range(3):
+                    acc[y,x,k] += img[int(newy),int(newx),k] * weight  
+    
     #TODO-BLOCK-END
     # END TODO
 
@@ -103,7 +112,6 @@ def normalizeBlend(acc):
          img: image with r,g,b values of acc normalized
     """
     # BEGIN TODO 11
-    # fill in this routine..
     #TODO-BLOCK-BEGIN
     h_acc = acc.shape[0]
     w_acc = acc.shape[1]
