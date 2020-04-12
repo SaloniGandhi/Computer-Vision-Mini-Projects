@@ -72,11 +72,6 @@ def accumulateBlend(img, acc, M, blendWidth):
     #TODO-BLOCK-BEGIN
     h = img.shape[0]
     w = img.shape[1]
-    
-    h_acc = acc.shape[0]
-    w_acc = acc.shape[1]
-    
-
     minX, minY, maxX, maxY = imageBoundingBox(img,M)
   
     for x in range(minX,maxX,1):
@@ -90,14 +85,14 @@ def accumulateBlend(img, acc, M, blendWidth):
             if img[int(newy), int(newx), 0] == 0 and img[int(newy), int(newx), 1] ==0 and img[int(newy), int(newx), 2] == 0:
                 continue
             if newx >= 0 and newx < w-1 and newy >= 0 and newy < h-1:    
-                weight = 1.0
+                wt = 1.0
                 if newx >= minX and newx < minX + blendWidth:
-                    weight = 1. * (newx - minX) / blendWidth
+                    wt = 1. * (newx - minX) / blendWidth
                 if newx <= maxX and newx > maxX - blendWidth:
-                    weight = 1. * (maxX - newx) / blendWidth
-                acc[y,x,3] += weight       
+                    wt = 1. * (maxX - newx) / blendWidth
+                acc[y,x,3] += wt       
                 for k in range(3):
-                    acc[y,x,k] += img[int(newy),int(newx),k] * weight  
+                    acc[y,x,k] += img[int(newy),int(newx),k] * wt  
     
     #TODO-BLOCK-END
     # END TODO
@@ -168,11 +163,11 @@ def getAccSize(ipv):
         # BEGIN TODO 9
         # add some code here to update minX, ..., maxY
         #TODO-BLOCK-BEGIN
-        min_x,min_y,max_x,max_y = imageBoundingBox(img,M)
-        minX = min(minX,min_x)
-        minY = min(minY,min_y)
-        maxX = max(maxX,max_x)
-        maxY = max(maxY,max_y)
+        min_X2,min_Y2,max_X2,max_Y2 = imageBoundingBox(img,M)
+        minX = min(minX,min_X2)
+        minY = min(minY,min_Y2)
+        maxX = max(maxX,max_X2)
+        maxY = max(maxY,max_Y2)
         
         #TODO-BLOCK-END
         # END TODO
@@ -180,7 +175,6 @@ def getAccSize(ipv):
     # Create an accumulator image
     accWidth = int(math.ceil(maxX) - math.floor(minX))
     accHeight = int(math.ceil(maxY) - math.floor(minY))
-    #print('accWidth, accHeight:', (accWidth, accHeight))
     translation = np.array([[1, 0, -minX], [0, 1, -minY], [0, 0, 1]])
 
     return accWidth, accHeight, channels, width, translation
